@@ -24,8 +24,10 @@ export default function MainFeature() {
   const [filterValue, setFilterValue] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedMatter, setSelectedMatter] = useState(null);
   const [viewMode, setViewMode] = useState('card'); // 'card' or 'list'
+  const [editMatter, setEditMatter] = useState(null);
   
   // Form states for new matter
   const [newMatter, setNewMatter] = useState({
@@ -174,6 +176,46 @@ export default function MainFeature() {
   };
   
   // Handle input change for new matter form
+  const handleEditMatter = (matter) => {
+    setEditMatter({
+      id: matter.id,
+      title: matter.title,
+      client: matter.client,
+      practiceArea: matter.practiceArea,
+      description: matter.description || '',
+    });
+    setShowEditModal(true);
+    setSelectedMatter(null); // Close view modal if open
+  };
+  
+  const handleUpdateMatter = (e) => {
+    e.preventDefault();
+    
+    // Validate form
+    const validationErrors = {};
+    if (!editMatter.title.trim()) validationErrors.title = "Matter title is required";
+    if (!editMatter.client) validationErrors.client = "Client is required";
+    if (!editMatter.practiceArea) validationErrors.practiceArea = "Practice area is required";
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    
+    // Update the matter in the array
+    const updatedMatters = matters.map(matter => 
+      matter.id === editMatter.id 
+        ? { ...matter, ...editMatter, lastActivity: 'Just now' }
+        : matter
+    );
+    
+    setMatters(updatedMatters);
+    setShowEditModal(false);
+    setErrors({});
+    
+    toast.success("Matter updated successfully");
+  };
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewMatter({
@@ -187,6 +229,20 @@ export default function MainFeature() {
         ...errors,
         [name]: ''
       });
+    }
+  };
+  
+  // Handle input change for edit matter form
+  const handleEditInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditMatter({
+      ...editMatter,
+      [name]: value
+    });
+    
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
     }
   };
   
@@ -396,6 +452,7 @@ export default function MainFeature() {
                   </button>
                   
                   <button 
+                    onClick={() => handleEditMatter(matter)}
                     className="flex items-center gap-1 text-xs font-medium text-surface-700 dark:text-surface-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     <PencilIcon className="h-3.5 w-3.5" />
@@ -466,6 +523,7 @@ export default function MainFeature() {
                       </button>
                       
                       <button
+                        onClick={() => handleEditMatter(matter)}
                         className="p-1 rounded-md text-surface-600 dark:text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-surface-100 dark:hover:bg-surface-800"
                         aria-label="Edit matter"
                       >
@@ -610,6 +668,129 @@ export default function MainFeature() {
           </motion.div>
         </div>
       )}
+      {/* Edit Matter Modal */}
+      {showEditModal && editMatter && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="w-full max-w-lg bg-white dark:bg-surface-800 rounded-2xl shadow-lg overflow-hidden"
+          >
+            <div className="flex justify-between items-center px-6 py-4 border-b border-surface-200 dark:border-surface-700">
+              <h3 className="text-lg font-semibold">Edit Matter</h3>
+              <button 
+                onClick={() => setShowEditModal(false)}
+                className="text-surface-500 hover:text-surface-700 dark:hover:text-surface-300"
+              >
+                <XIcon className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleUpdateMatter} className="p-6">
+              <div className="space-y-5">
+                <div>
+                  <label htmlFor="edit-title" className="block text-sm font-medium mb-1.5">
+                    Matter Title*
+                  </label>
+                  <input
+                    type="text"
+                    id="edit-title"
+                    name="title"
+                    value={editMatter.title}
+                    onChange={handleEditInputChange}
+                    className={`input w-full ${errors.title ? 'border-red-500 dark:border-red-500' : ''}`}
+                    placeholder="Enter matter title"
+                  />
+                  {errors.title && (
+                    <p className="mt-1 text-sm text-red-500">{errors.title}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor="edit-client" className="block text-sm font-medium mb-1.5">
+                    Client*
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="edit-client"
+                      name="client"
+                      value={editMatter.client}
+                      onChange={handleEditInputChange}
+                      className={`input w-full appearance-none pr-9 ${errors.client ? 'border-red-500 dark:border-red-500' : ''}`}
+                    >
+                      <option value="">Select client</option>
+                      {clients.map(client => (
+                        <option key={client} value={client}>{client}</option>
+                      ))}
+                    </select>
+                    <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-500" />
+                  </div>
+                  {errors.client && (
+                    <p className="mt-1 text-sm text-red-500">{errors.client}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor="edit-practiceArea" className="block text-sm font-medium mb-1.5">
+                    Practice Area*
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="edit-practiceArea"
+                      name="practiceArea"
+                      value={editMatter.practiceArea}
+                      onChange={handleEditInputChange}
+                      className={`input w-full appearance-none pr-9 ${errors.practiceArea ? 'border-red-500 dark:border-red-500' : ''}`}
+                    >
+                      <option value="">Select practice area</option>
+                      {practiceAreas.map(area => (
+                        <option key={area} value={area}>{area}</option>
+                      ))}
+                    </select>
+                    <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-500" />
+                  </div>
+                  {errors.practiceArea && (
+                    <p className="mt-1 text-sm text-red-500">{errors.practiceArea}</p>
+                  )}
+                </div>
+                
+                <div>
+                  <label htmlFor="edit-description" className="block text-sm font-medium mb-1.5">
+                    Description
+                  </label>
+                  <textarea
+                    id="edit-description"
+                    name="description"
+                    value={editMatter.description}
+                    onChange={handleEditInputChange}
+                    className="input w-full min-h-[100px]"
+                    placeholder="Enter matter description"
+                  ></textarea>
+                </div>
+              </div>
+              
+              <div className="mt-8 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="btn btn-outline"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                >
+                  <CheckIcon className="h-4 w-4" />
+                  <span className="ml-1">Update Matter</span>
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+      
       
       {/* Matter view interaction */}
       {selectedMatter && (
@@ -708,7 +889,10 @@ export default function MainFeature() {
                     
                     <div className="border-t border-surface-200 dark:border-surface-700 pt-4">
                       <div className="flex justify-end gap-3">
-                        <button className="btn btn-outline">
+                        <button 
+                          onClick={() => handleEditMatter(selectedMatter)}
+                          className="btn btn-outline"
+                        >
                           <PencilIcon className="h-4 w-4" />
                           <span className="ml-1">Edit</span>
                         </button>
