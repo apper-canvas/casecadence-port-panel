@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useNavigate } from 'framer-motion';
 import { toast } from 'react-toastify';
 import getIcon from '../utils/iconUtils';
 import MainFeature from '../components/MainFeature';
@@ -7,6 +7,7 @@ import MainFeature from '../components/MainFeature';
 export default function Home() {
   // State for tracking active sidebar item
   const [activeSidebarItem, setActiveSidebarItem] = useState('dashboard');
+  const navigate = useNavigate();
   
   // Create icon components
   const DashboardIcon = getIcon('LayoutDashboard');
@@ -33,8 +34,18 @@ export default function Home() {
   
   // Function to handle sidebar item click
   const handleSidebarItemClick = (itemId) => {
-    setActiveSidebarItem(itemId);
-    // We'd normally navigate here, but for this MVP we'll stay on the main page
+    
+    // Navigation mapping
+    const navigationMap = {
+      matters: '/matters',
+      // Add other routes here as they're implemented
+    };
+    
+    // Navigate if we have a route for this item
+    if (navigationMap[itemId]) {
+      navigate(navigationMap[itemId]);
+    } else {
+      toast.info(`Navigating to ${itemId}`, { 
     toast.info(`Navigating to ${itemId}`, { 
       icon: ({ theme, type }) => {
         const NavIcon = sidebarItems.find(item => item.id === itemId)?.icon;
