@@ -51,6 +51,7 @@ export default function Home() {
         return NavIcon ? <NavIcon className="h-5 w-5 text-primary" /> : null;
       }
     });
+  }
   };
   
   return (
