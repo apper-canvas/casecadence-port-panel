@@ -45,8 +45,7 @@ export default function Home() {
     if (navigationMap[itemId]) {
       navigate(navigationMap[itemId]);
     } else {
-      toast.info(`Navigating to ${itemId}`, { 
-    toast.info(`Navigating to ${itemId}`, { 
+      toast.info(`Navigating to ${itemId}`, {
       icon: ({ theme, type }) => {
         const NavIcon = sidebarItems.find(item => item.id === itemId)?.icon;
         return NavIcon ? <NavIcon className="h-5 w-5 text-primary" /> : null;
