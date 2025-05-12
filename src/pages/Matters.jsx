@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import getIcon from '../utils/iconUtils';
 
 export default function Matters() {
@@ -23,6 +23,16 @@ export default function Matters() {
   const XIcon = getIcon('X');
   const SlidersIcon = getIcon('Sliders');
   const ArrowDownAZIcon = getIcon('ArrowDownAZ');
+  // Additional icons for sidebar
+  const HomeIcon = getIcon('Home');
+  const CalendarIcon = getIcon('Calendar');
+  const UsersIcon = getIcon('Users');
+  const FileTextIcon = getIcon('FileText');
+  const SettingsIcon = getIcon('Settings');
+  const HelpCircleIcon = getIcon('HelpCircle');
+  
+  const navigate = useNavigate();
+  
   const ArrowDownZAIcon = getIcon('ArrowDownZA');
   const ChevronLeftIcon = getIcon('ChevronLeft');
   const ChevronRightIcon = getIcon('ChevronRight');
@@ -38,6 +48,8 @@ export default function Matters() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [activeSidebarItem, setActiveSidebarItem] = useState('matters');
   
   // Mock matters data
   const [matters, setMatters] = useState([
@@ -256,6 +268,46 @@ export default function Matters() {
       toast.info(`Exporting ${selectedItems.length} matters`);
     }
   };
+  // Handle sidebar item click
+  const handleSidebarItemClick = (itemId) => {
+    setActiveSidebarItem(itemId);
+    
+    // Navigate based on the selected item
+    switch (itemId) {
+      case 'dashboard':
+        navigate('/');
+        toast.info('Navigating to Dashboard');
+        break;
+      case 'matters':
+        navigate('/matters');
+        toast.info('Navigating to Matters');
+        break;
+      case 'calendar':
+        toast.info('Calendar feature coming soon!');
+        break;
+      case 'clients':
+        toast.info('Clients management coming soon!');
+        break;
+      case 'documents':
+        toast.info('Document management coming soon!');
+        break;
+      case 'settings':
+        toast.info('Settings page coming soon!');
+        break;
+      case 'help':
+        toast.info('Help center coming soon!');
+        break;
+      default:
+        break;
+    }
+  };
+  
+  // Toggle sidebar expansion
+  const toggleSidebar = () => {
+    setSidebarExpanded(!sidebarExpanded);
+    toast.info(sidebarExpanded ? 'Sidebar collapsed' : 'Sidebar expanded');
+  };
+  
   
   // Status badge component
   const StatusBadge = ({ status }) => {
@@ -288,8 +340,72 @@ export default function Matters() {
   };
   
   return (
-    <div className="flex-1 p-8 overflow-y-auto">
-      <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-8">
+    <div className="flex-1 flex">
+      {/* Sidebar navigation */}
+      <aside className={`h-[calc(100vh-4rem)] bg-white dark:bg-surface-900 border-r border-surface-200 dark:border-surface-800 flex flex-col transition-all duration-300 ${
+        sidebarExpanded ? 'w-64' : 'w-20'
+      } sticky top-16 z-20`}>
+        {/* Sidebar content */}
+        <div className="flex-1 py-6 flex flex-col">
+          <ul className="space-y-1 px-3">
+            {/* Dashboard */}
+            <li>
+              <button
+                onClick={() => handleSidebarItemClick('dashboard')}
+                className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  activeSidebarItem === 'dashboard'
+                    ? 'bg-primary-light/10 text-primary dark:bg-primary/20'
+                    : 'hover:bg-surface-100 dark:hover:bg-surface-800/60 text-surface-700 dark:text-surface-300'
+                }`}
+              >
+                <HomeIcon className="h-5 w-5 flex-shrink-0" />
+                <span className={`truncate ${!sidebarExpanded && 'hidden'}`}>Dashboard</span>
+              </button>
+            </li>
+            
+            {/* Matters */}
+            <li>
+              <button
+                onClick={() => handleSidebarItemClick('matters')}
+                className={`w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  activeSidebarItem === 'matters'
+                    ? 'bg-primary-light/10 text-primary dark:bg-primary/20'
+                    : 'hover:bg-surface-100 dark:hover:bg-surface-800/60 text-surface-700 dark:text-surface-300'
+                }`}
+              >
+                <BriefcaseIcon className="h-5 w-5 flex-shrink-0" />
+                <span className={`truncate ${!sidebarExpanded && 'hidden'}`}>Matters</span>
+              </button>
+            </li>
+            
+            {/* Calendar */}
+            <li>
+              <button
+                onClick={() => handleSidebarItemClick('calendar')}
+                className="w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:bg-surface-100 dark:hover:bg-surface-800/60 text-surface-700 dark:text-surface-300"
+              >
+                <CalendarIcon className="h-5 w-5 flex-shrink-0" />
+                <span className={`truncate ${!sidebarExpanded && 'hidden'}`}>Calendar</span>
+              </button>
+            </li>
+            
+            {/* Clients */}
+            <li>
+              <button
+                onClick={() => handleSidebarItemClick('clients')}
+                className="w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg transition-colors hover:bg-surface-100 dark:hover:bg-surface-800/60 text-surface-700 dark:text-surface-300"
+              >
+                <UsersIcon className="h-5 w-5 flex-shrink-0" />
+                <span className={`truncate ${!sidebarExpanded && 'hidden'}`}>Clients</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </aside>
+      
+      {/* Main content */}
+      <div className="flex-1 p-8 overflow-y-auto">
+        <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-8">
         {/* Header */}
         <header className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -710,6 +826,7 @@ export default function Matters() {
               </button>
             </div>
           </div>
+      </div>
         )}
     </div>
   );
