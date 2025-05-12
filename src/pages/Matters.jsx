@@ -483,6 +483,234 @@ export default function Matters() {
           </div>
         )}
       </div>
+        
+        {/* Matter Cards */}
+        {viewMode === 'card' && filteredMatters.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {paginatedMatters.map((matter, index) => (
+              <motion.div
+                key={matter.id}
+                custom={index}
+                initial="hidden"
+                animate="visible"
+                variants={listItemVariants}
+                className="card group"
+              >
+                <div className="p-5">
+                  <div className="flex items-start mb-3">
+                    <div className="flex-1">
+                      <h3 className="font-semibold truncate" title={matter.title}>
+                        {matter.title}
+                      </h3>
+                      <div className="text-sm text-surface-600 dark:text-surface-400">
+                        {matter.client}
+                      </div>
+                    </div>
+                    <StatusBadge status={matter.status} />
+                  </div>
+                  
+                  <div className="text-sm text-surface-600 dark:text-surface-400 mb-2 flex items-center gap-1">
+                    <BriefcaseIcon className="h-3.5 w-3.5" />
+                    <span>{matter.practiceArea}</span>
+                  </div>
+                  
+                  <p className="text-sm text-surface-700 dark:text-surface-300 line-clamp-2 mb-4">
+                    {matter.description}
+                  </p>
+                  
+                  <div className="flex justify-between items-center text-xs text-surface-500 dark:text-surface-400">
+                    <div className="flex items-center gap-1">
+                      <ClockIcon className="h-3.5 w-3.5" />
+                      <span>{matter.lastActivity}</span>
+                    </div>
+                    <div>Documents: {matter.totalDocuments}</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center border-t border-surface-200 dark:border-surface-700">
+                  <div className="flex-none p-3">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-surface-300 dark:border-surface-600 text-primary focus:ring-primary-light"
+                      checked={selectedItems.includes(matter.id)}
+                      onChange={() => toggleItemSelection(matter.id)}
+                    />
+                  </div>
+                  <div className="flex-1 flex justify-end p-2 gap-3">
+                    <button 
+                      onClick={() => handleViewMatter(matter.id)}
+                      className="p-1 rounded-md text-surface-600 dark:text-surface-400 hover:text-primary dark:hover:text-primary-light hover:bg-surface-100 dark:hover:bg-surface-800"
+                      aria-label="View matter"
+                    >
+                      <EyeIcon className="h-4 w-4" />
+                    </button>
+                    <button 
+                      onClick={() => handleEditMatter(matter.id)}
+                      className="p-1 rounded-md text-surface-600 dark:text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-surface-100 dark:hover:bg-surface-800"
+                      aria-label="Edit matter"
+                    >
+                      <PencilIcon className="h-4 w-4" />
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteMatter(matter.id)}
+                      className="p-1 rounded-md text-surface-600 dark:text-surface-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-surface-100 dark:hover:bg-surface-800"
+                      aria-label="Delete matter"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+        
+        {/* Matter List */}
+        {viewMode === 'list' && filteredMatters.length > 0 && (
+          <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-card dark:shadow-none border border-surface-200 dark:border-surface-700 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-surface-200 dark:border-surface-700">
+                    <th className="w-10 px-4 py-3 text-left">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-surface-300 dark:border-surface-600 text-primary focus:ring-primary-light"
+                        checked={selectedItems.length > 0 && selectedItems.length === paginatedMatters.length}
+                        onChange={() => {
+                          if (selectedItems.length === paginatedMatters.length) {
+                            setSelectedItems([]);
+                          } else {
+                            setSelectedItems(paginatedMatters.map(m => m.id));
+                          }
+                        }}
+                      />
+                    </th>
+                    <th className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300">Matter</th>
+                    <th className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300">Client</th>
+                    <th className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300">Practice Area</th>
+                    <th className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300">Status</th>
+                    <th className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300">Date Opened</th>
+                    <th className="px-4 py-3 text-right font-medium text-surface-700 dark:text-surface-300">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedMatters.map((matter, index) => (
+                    <motion.tr
+                      key={matter.id}
+                      custom={index}
+                      initial="hidden"
+                      animate="visible"
+                      variants={listItemVariants}
+                      className="border-b border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800/50"
+                    >
+                      <td className="px-4 py-3">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-surface-300 dark:border-surface-600 text-primary focus:ring-primary-light"
+                          checked={selectedItems.includes(matter.id)}
+                          onChange={() => toggleItemSelection(matter.id)}
+                        />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-medium">{matter.title}</div>
+                        <div className="text-xs text-surface-500 dark:text-surface-400 line-clamp-1">
+                          {matter.description}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">{matter.client}</td>
+                      <td className="px-4 py-3">{matter.practiceArea}</td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={matter.status} />
+                      </td>
+                      <td className="px-4 py-3 text-sm">{matter.dateOpened}</td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => handleViewMatter(matter.id)}
+                            className="p-1 rounded-md text-surface-600 dark:text-surface-400 hover:text-primary dark:hover:text-primary-light hover:bg-surface-100 dark:hover:bg-surface-800"
+                            aria-label="View matter"
+                          >
+                            <EyeIcon className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleEditMatter(matter.id)}
+                            className="p-1 rounded-md text-surface-600 dark:text-surface-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-surface-100 dark:hover:bg-surface-800"
+                            aria-label="Edit matter"
+                          >
+                            <PencilIcon className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteMatter(matter.id)}
+                            className="p-1 rounded-md text-surface-600 dark:text-surface-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-surface-100 dark:hover:bg-surface-800"
+                            aria-label="Delete matter"
+                          >
+                            <TrashIcon className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        
+        {/* Pagination */}
+        {filteredMatters.length > 0 && (
+          <div className="mt-6 flex justify-between items-center">
+            <div className="text-sm text-surface-600 dark:text-surface-400">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredMatters.length)} of {filteredMatters.length} results
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-md border border-surface-200 dark:border-surface-700 disabled:opacity-50"
+              >
+                <ChevronLeftIcon className="h-4 w-4" />
+              </button>
+              
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                // Calculate page numbers to show
+                let pageToShow;
+                if (totalPages <= 5) {
+                  pageToShow = i + 1;
+                } else if (currentPage <= 3) {
+                  pageToShow = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageToShow = totalPages - 4 + i;
+                } else {
+                  pageToShow = currentPage - 2 + i;
+                }
+                
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(pageToShow)}
+                    className={`h-8 min-w-[32px] px-2 rounded-md ${
+                      currentPage === pageToShow
+                        ? 'bg-primary text-white'
+                        : 'border border-surface-200 dark:border-surface-700 hover:bg-surface-100 dark:hover:bg-surface-800'
+                    }`}
+                  >
+                    {pageToShow}
+                  </button>
+                );
+              })}
+              
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-md border border-surface-200 dark:border-surface-700 disabled:opacity-50"
+              >
+                <ChevronRightIcon className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
     </div>
   );
 }
