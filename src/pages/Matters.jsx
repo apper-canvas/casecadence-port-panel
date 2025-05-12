@@ -25,8 +25,6 @@ export default function Matters() {
   const ArrowDownAZIcon = getIcon('ArrowDownAZ');
   // Additional icons for sidebar
   const HomeIcon = getIcon('Home');
-  const CalendarIcon = getIcon('Calendar');
-  const UsersIcon = getIcon('Users');
   const FileTextIcon = getIcon('FileText');
   const SettingsIcon = getIcon('Settings');
   const HelpCircleIcon = getIcon('HelpCircle');
