@@ -288,7 +288,7 @@ export default function Matters() {
   };
   
   return (
-    <div className="bg-surface-50 dark:bg-surface-900 min-h-screen">
+    <div className="flex-1 p-8 overflow-y-auto">
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-8">
         {/* Header */}
         <header className="mb-8">
@@ -485,7 +485,7 @@ export default function Matters() {
       </div>
         
         {/* Matter Cards */}
-        {viewMode === 'card' && filteredMatters.length > 0 && (
+        {filteredMatters.length > 0 && viewMode === 'card' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedMatters.map((matter, index) => (
               <motion.div
@@ -566,7 +566,7 @@ export default function Matters() {
         )}
         
         {/* Matter List */}
-        {viewMode === 'list' && filteredMatters.length > 0 && (
+        {filteredMatters.length > 0 && viewMode === 'list' && (
           <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-card dark:shadow-none border border-surface-200 dark:border-surface-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
