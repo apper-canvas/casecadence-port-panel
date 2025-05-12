@@ -824,9 +824,8 @@ export default function Matters() {
               </button>
             </div>
           </div>
-      </div>
         </div>
-      )}
+      </div>)}
       </div>
   );
 }
